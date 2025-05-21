@@ -71,3 +71,15 @@
     @include text-3;
   }
 }
+
+@mixin button-3 {
+  color: $w1;
+  background-color: $c1;
+  padding: $s2 $s4;
+  line-height: 1.8;
+  //   @include shadow;
+  @include border;
+  & {
+    @include text-3;
+  }
+}

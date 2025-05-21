@@ -87,10 +87,11 @@
         <button>Próxima página</button>
       </div>
     </div>
+
     <footer class="footer">
       <div class="footer-container">
         <p>UFVJM 2025.</p>
-        <p>Jhonathan Wallace, Mariana Morais e Victor Almeida.</p>
+        <p>Jhonathan Wallace, Mariana Santiago e Victor Almeida.</p>
       </div>
     </footer>
   </div>
@@ -229,6 +230,7 @@
   gap: $s5;
   @include mbottom-7;
   li {
+    cursor: pointer;
     background-color: $w1;
     padding: $s7;
     @include shadow;
@@ -242,7 +244,7 @@
     p {
       color: $c2;
       & {
-        @include text-1;
+        @include text-2;
       }
       b {
         font-weight: 500;
