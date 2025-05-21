@@ -1,11 +1,7 @@
 <template>
   <div class="pagina-inicio">
-    <header class="header">
-      <div class="header-container">
-        <div class="logout"><IconsLogout />Sair</div>
-        <p>Mariana Morais</p>
-      </div>
-    </header>
+    <HeaderComp />
+
     <div class="conteudo-container">
       <div class="introducao">
         <h1>Lista de monografias</h1>
@@ -88,48 +84,13 @@
       </div>
     </div>
 
-    <footer class="footer">
-      <div class="footer-container">
-        <p>UFVJM 2025.</p>
-        <p>Jhonathan Wallace, Mariana Santiago e Victor Almeida.</p>
-      </div>
-    </footer>
+    <FooterComp />
   </div>
 </template>
 
 <script setup></script>
 
 <style lang="scss" scoped>
-.header {
-  background-color: $c1;
-  color: $w1;
-  @include ptop-5;
-  @include pbottom-5;
-  .header-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    .logout {
-      display: flex;
-      align-items: center;
-      gap: $s4;
-      cursor: pointer;
-      & {
-        @include text-2;
-      }
-    }
-    p {
-      cursor: pointer;
-      & {
-        @include text-2;
-      }
-    }
-    & {
-      @include container;
-    }
-  }
-}
-
 .pagina-inicio {
   background-color: $w2;
   min-height: 100vh;
@@ -247,6 +208,7 @@
         @include text-2;
       }
       b {
+        color: $c1;
         font-weight: 500;
       }
     }
@@ -260,24 +222,6 @@
   @include mbottom-9;
   button {
     @include button-2;
-  }
-}
-
-.footer {
-  background-color: $c1;
-  color: $w1;
-  @include ptop-5;
-  @include pbottom-5;
-  .footer-container {
-    display: flex;
-    gap: $s5;
-    justify-content: space-between;
-    & {
-      @include container;
-    }
-    p {
-      @include text-3;
-    }
   }
 }
 </style>
