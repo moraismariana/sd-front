@@ -1,0 +1,50 @@
+// @use "./colors" as *;
+// @use "./mixins" as *;
+// @use "./typo" as *;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+ul,
+p,
+blockquote,
+dd {
+  margin: 0px;
+  white-space: pre-line;
+}
+
+ul {
+  padding: 0px;
+  list-style: none;
+}
+
+a {
+  display: block;
+  max-width: fit-content;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  background: none;
+  outline: none;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+}

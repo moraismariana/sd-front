@@ -1,0 +1,73 @@
+@use "./mixins" as *;
+@use "./colors" as *;
+
+@mixin title-1 {
+  & {
+    font-family: "Reddit Sans";
+    font-size: px-rem(36);
+    font-weight: 500;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  //   & {
+  //     @include screen(notebook-m) {
+  //       font-size: px-rem(52);
+  //     }
+  //   }
+}
+
+@mixin title-2 {
+  & {
+    font-family: "Reddit Sans";
+    font-size: px-rem(20);
+    font-weight: 600;
+    line-height: 1;
+  }
+}
+
+@mixin text-1 {
+  & {
+    font-family: "Reddit Sans";
+    font-size: px-rem(18);
+    font-weight: 400;
+  }
+}
+
+@mixin text-2 {
+  & {
+    font-family: "Reddit Sans";
+    font-size: px-rem(16);
+    font-weight: 400;
+  }
+}
+
+@mixin text-3 {
+  & {
+    font-family: "Reddit Sans";
+    font-size: px-rem(15);
+    font-weight: 400;
+  }
+}
+
+@mixin button {
+  color: $c1;
+  background-color: $w1;
+  padding: $s2 $s4;
+  @include shadow;
+  @include border;
+  & {
+    @include text-3;
+  }
+}
+
+@mixin button-2 {
+  color: $c1;
+  background-color: $w1;
+  padding: $s2 $s4;
+  line-height: 1.8;
+  @include shadow;
+  @include border;
+  & {
+    @include text-3;
+  }
+}
