@@ -1,13 +1,16 @@
 <template>
   <header class="header">
     <div class="header-container">
-      <div class="logout"><IconsLogout />Sair</div>
+      <div @click.prevent="logout" class="logout"><IconsLogout />Sair</div>
       <p>Mariana Morais</p>
     </div>
   </header>
 </template>
 
-<script setup></script>
+<script setup>
+import { useAuth } from "~/composables/useAuth";
+const { logout } = useAuth();
+</script>
 
 <style lang="scss" scoped>
 .header {

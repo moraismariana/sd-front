@@ -41,4 +41,9 @@ export default defineNuxtConfig({
     },
     display: "swap",
   },
+  runtimeConfig: {
+    public: {
+      djangoApiBaseUrl: "http://127.0.0.1:8000",
+    },
+  },
 });

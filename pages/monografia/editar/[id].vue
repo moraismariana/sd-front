@@ -275,7 +275,8 @@ const salvarMonografia = () => {
   Promise.all(promises)
     .then(() => {
       window.alert("Monografia atualizada com sucesso.");
-      getMonografia();
+      // getMonografia();
+      useRouter().push("/");
     })
     .catch((error) => {
       console.error("Erro ao atualizar a monografia:", error);

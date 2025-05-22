@@ -3,23 +3,72 @@
     <div class="login-container">
       <div class="box">
         <h1>Login</h1>
-        <form>
+        <form @submit.prevent="handleLogin">
           <div>
             <label for="username">Usuário</label>
-            <input type="text" id="username" name="username" />
+            <input
+              type="text"
+              id="username"
+              name="username"
+              v-model="username"
+              required
+            />
           </div>
           <div>
             <label for="password">Senha</label>
-            <input type="text" id="password" name="password" />
+            <input
+              type="password"
+              id="password"
+              name="password"
+              v-model="password"
+              required
+            />
           </div>
-          <button @click.prevent>Entrar</button>
+          <button type="submit">Entrar</button>
         </form>
       </div>
     </div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useAuth } from "~/composables/useAuth";
+
+const username = ref("");
+const password = ref("");
+const errorMessage = ref("");
+const isLoading = ref(false);
+
+const { login, isAuthenticated, initAuth } = useAuth();
+const router = useRouter();
+const route = useRoute();
+
+onMounted(() => {
+  if (process.client) {
+    initAuth();
+    if (isAuthenticated.value) {
+      const redirectPath = route.query.redirect || "/";
+      router.replace(redirectPath);
+    }
+  }
+});
+
+const handleLogin = async () => {
+  isLoading.value = true;
+  errorMessage.value = "";
+  const success = await login(username.value, password.value);
+  isLoading.value = false;
+
+  if (success && isAuthenticated.value) {
+    const redirectPath = route.query.redirect || "/";
+    router.push(redirectPath);
+  } else {
+    errorMessage.value = "Falha no login. Verifique suas credenciais.";
+  }
+};
+</script>
 
 <style lang="scss" scoped>
 .pagina-login {
