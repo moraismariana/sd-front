@@ -29,18 +29,28 @@
 
       <div class="ordenacao">
         <p>{{ totalMonografias }} monografias</p>
-        <!-- <div>
+        <div>
           <p>Ordenar por:</p>
-          <button>
-            Mais recentes
-            <IconsArrowDown />
-          </button>
-        </div> -->
+          <select
+            id="ordenacao-select"
+            v-model="selectedOrdering"
+            @change="aplicarOrdenacao"
+          >
+            <option value="-data_defesa">Mais recentes</option>
+            <option value="data_defesa">Mais antigos</option>
+            <option value="titulo">A - Z (Título)</option>
+            <option value="-titulo">Z - A (Título)</option>
+          </select>
+        </div>
       </div>
 
       <div v-if="monografias.length > 0">
-        <ul class="lista" v-for="item in monografias" :key="item.id">
-          <NuxtLink :to="`/monografia/${item.id}`">
+        <ul class="lista">
+          <NuxtLink
+            v-for="item in monografias"
+            :key="item.id"
+            :to="`/monografia/${item.id}`"
+          >
             <li>
               <h4>{{ item.titulo }}</h4>
               <p><b>Autor: </b>{{ item.autor }}</p>
@@ -78,6 +88,7 @@ const { $api } = useNuxtApp();
 const monografias = ref([]);
 const buscaInput = ref("");
 const dataBuscaInput = ref("");
+const selectedOrdering = ref("-data_defesa");
 
 const totalMonografias = ref(null);
 const currentPage = ref(1);
@@ -92,6 +103,9 @@ const fetchMonografias = (params = {}) => {
   }
   if (params.data_defesa) {
     queryParams.append("data_defesa", params.data_defesa);
+  }
+  if (selectedOrdering.value) {
+    queryParams.append("ordering", selectedOrdering.value);
   }
 
   const url = `/monografias/monografias/?${queryParams.toString()}`;
@@ -126,6 +140,15 @@ const pesquisar = () => {
 const pesquisarPorData = () => {
   buscaInput.value = "";
   fetchMonografias({ data_defesa: dataBuscaInput.value });
+};
+
+const resetarPaginaEBuscar = () => {
+  currentPage.value = 1;
+  fetchMonografias();
+};
+
+const aplicarOrdenacao = () => {
+  resetarPaginaEBuscar();
 };
 
 fetchMonografias();
@@ -231,10 +254,15 @@ const irParaPaginaAnterior = () => {
     display: flex;
     align-items: center;
     gap: $s5;
-    button {
+    select {
+      appearance: none;
+      border: none;
+      outline: none;
       display: flex;
       align-items: center;
       gap: $s2;
+      width: 160px;
+      justify-content: center;
       & {
         @include button;
       }
@@ -292,6 +320,20 @@ const irParaPaginaAnterior = () => {
   @include mbottom-9;
   button {
     @include button-2;
+  }
+}
+
+.dropdown-container {
+  position: relative;
+  .dropdown {
+    position: absolute;
+    bottom: -40px;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    & {
+      @include button-2;
+    }
   }
 }
 </style>
