@@ -4,7 +4,7 @@
     <div class="conteudo-container">
       <div class="introducao">
         <h1>Editar monografia</h1>
-        <button>
+        <button @click.prevent="modalAtivo = true">
           <IconsTrash />
         </button>
       </div>
@@ -115,16 +115,16 @@
 
     <FooterComp />
 
-    <!-- <div class="excluir-modal">
+    <div v-if="modalAtivo" class="excluir-modal">
       <div class="modal-box">
         <h3>Excluir monografia</h3>
         <p>Você deseja excluir permanentemente a monografia?</p>
         <div>
-          <button @click.prevent>Cancelar</button>
-          <button @click.prevent>Excluir</button>
+          <button @click.prevent="modalAtivo = false">Cancelar</button>
+          <button @click.prevent="excluirMonografia">Excluir</button>
         </div>
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -163,6 +163,20 @@ const getMonografia = () => {
 };
 
 getMonografia();
+
+const modalAtivo = ref(false);
+
+const excluirMonografia = () => {
+  $api
+    .delete(`/monografias/monografias/${useRoute().params.id}/`)
+    .then(() => {
+      window.alert("Monografia deletada com sucesso.");
+      useRouter().push("/");
+    })
+    .catch(() => {
+      console.log("Não foi possível excluir a monografia.");
+    });
+};
 
 const removerArquivo = (id) => {
   arquivosParaDeletar.value.push(id);
