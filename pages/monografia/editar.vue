@@ -77,6 +77,17 @@
     </div>
 
     <FooterComp />
+
+    <!-- <div class="excluir-modal">
+      <div class="modal-box">
+        <h3>Excluir monografia</h3>
+        <p>Você deseja excluir permanentemente a monografia?</p>
+        <div>
+          <button @click.prevent>Cancelar</button>
+          <button @click.prevent>Excluir</button>
+        </div>
+      </div>
+    </div> -->
   </div>
 </template>
 
@@ -223,6 +234,50 @@
     }
     & > button {
       & {
+        @include button-3;
+      }
+    }
+  }
+}
+
+.excluir-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100%;
+  background-color: rgba($c1, 0.7);
+  .modal-box {
+    background-color: $w2;
+    padding: $s9;
+    box-sizing: border-box;
+    max-width: 450px;
+    position: relative;
+    top: 50vh;
+    transform: translateY(-50%);
+    @include shadow;
+    @include align-div;
+    @include border;
+    h3 {
+      @include mbottom-5;
+      & {
+        @include title-2;
+      }
+    }
+    p {
+      @include mbottom-5;
+      & {
+        @include text-2;
+      }
+    }
+    div {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: $s5;
+      button:nth-of-type(1) {
+        @include button-2;
+      }
+      button:nth-of-type(2) {
         @include button-3;
       }
     }
