@@ -28,14 +28,14 @@
       </div>
 
       <div class="ordenacao">
-        <p>{{ monografias.length }} monografias</p>
-        <div>
+        <p>{{ totalMonografias }} monografias</p>
+        <!-- <div>
           <p>Ordenar por:</p>
           <button>
             Mais recentes
             <IconsArrowDown />
           </button>
-        </div>
+        </div> -->
       </div>
 
       <div v-if="monografias.length > 0">
@@ -59,8 +59,12 @@
       </div>
 
       <div class="paginacao">
-        <button>Página anterior</button>
-        <button>Próxima página</button>
+        <button @click.prevent="irParaPaginaAnterior" v-if="previous">
+          Página anterior
+        </button>
+        <button @click.prevent="irParaProximaPagina" v-if="next">
+          Próxima página
+        </button>
       </div>
     </div>
 
@@ -75,11 +79,14 @@ const monografias = ref([]);
 const buscaInput = ref("");
 const dataBuscaInput = ref("");
 
-const fetchMonografias = (params = {}) => {
-  console.log(params);
-  monografias.value = [];
+const totalMonografias = ref(null);
+const currentPage = ref(1);
+const next = ref(null);
+const previous = ref(null);
 
+const fetchMonografias = (params = {}) => {
   const queryParams = new URLSearchParams();
+  queryParams.append("page", currentPage.value.toString());
   if (params.search) {
     queryParams.append("search", params.search);
   }
@@ -93,6 +100,9 @@ const fetchMonografias = (params = {}) => {
     .get(url)
     .then((response) => {
       if (response.data && Array.isArray(response.data.results)) {
+        totalMonografias.value = response.data.count;
+        next.value = response.data.next;
+        previous.value = response.data.previous;
         monografias.value = response.data.results;
       } else if (Array.isArray(response.data)) {
         monografias.value = response.data;
@@ -119,6 +129,20 @@ const pesquisarPorData = () => {
 };
 
 fetchMonografias();
+
+const irParaProximaPagina = () => {
+  if (next.value) {
+    currentPage.value++;
+    fetchMonografias();
+  }
+};
+
+const irParaPaginaAnterior = () => {
+  if (previous.value) {
+    currentPage.value--;
+    fetchMonografias();
+  }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -170,7 +194,7 @@ fetchMonografias();
       color: $c1;
       background: none;
       flex-grow: 1;
-      height: 100%;
+      height: 37px;
       box-sizing: border-box;
       padding: $s2 $s4;
       border: none;
