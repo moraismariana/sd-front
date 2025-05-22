@@ -117,12 +117,17 @@
     @include mbottom-7;
   }
   .arquivo {
+    cursor: pointer;
+    color: $c2;
     background-color: $w2;
     display: flex;
     gap: $s5;
     justify-content: space-between;
     padding: $s5;
     @include mtop-5;
+    p {
+      color: $c4;
+    }
   }
 }
 </style>
