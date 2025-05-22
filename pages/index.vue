@@ -5,7 +5,7 @@
     <div class="conteudo-container">
       <div class="introducao">
         <h1>Lista de monografias</h1>
-        <button @click.prevent><IconsPlus /></button>
+        <NuxtLink to="/monografia/criar"><IconsPlus /></NuxtLink>
       </div>
 
       <form class="buscas">
@@ -23,7 +23,7 @@
       </form>
 
       <div class="ordenacao">
-        <p>120 monografias</p>
+        <p>{{ monografias.length }} monografias</p>
         <div>
           <p>Ordenar por:</p>
           <button>
@@ -33,50 +33,25 @@
         </div>
       </div>
 
-      <ul class="lista">
-        <li>
-          <h4>Título da monografia</h4>
-          <p><b>Autor: </b>Nome do autor</p>
-          <p><b>Orientador: </b>Nome do orientador</p>
-          <p><b>Coorientador: </b>Nome do coorientador</p>
-          <p><b>Data de defesa: </b>21/05/2025</p>
-        </li>
-        <li>
-          <h4>Título da monografia</h4>
-          <p><b>Autor: </b>Nome do autor</p>
-          <p><b>Orientador: </b>Nome do orientador</p>
-          <p><b>Coorientador: </b>Nome do coorientador</p>
-          <p><b>Data de defesa: </b>21/05/2025</p>
-        </li>
-        <li>
-          <h4>Título da monografia</h4>
-          <p><b>Autor: </b>Nome do autor</p>
-          <p><b>Orientador: </b>Nome do orientador</p>
-          <p><b>Coorientador: </b>Nome do coorientador</p>
-          <p><b>Data de defesa: </b>21/05/2025</p>
-        </li>
-        <li>
-          <h4>Título da monografia</h4>
-          <p><b>Autor: </b>Nome do autor</p>
-          <p><b>Orientador: </b>Nome do orientador</p>
-          <p><b>Coorientador: </b>Nome do coorientador</p>
-          <p><b>Data de defesa: </b>21/05/2025</p>
-        </li>
-        <li>
-          <h4>Título da monografia</h4>
-          <p><b>Autor: </b>Nome do autor</p>
-          <p><b>Orientador: </b>Nome do orientador</p>
-          <p><b>Coorientador: </b>Nome do coorientador</p>
-          <p><b>Data de defesa: </b>21/05/2025</p>
-        </li>
-        <li>
-          <h4>Título da monografia</h4>
-          <p><b>Autor: </b>Nome do autor</p>
-          <p><b>Orientador: </b>Nome do orientador</p>
-          <p><b>Coorientador: </b>Nome do coorientador</p>
-          <p><b>Data de defesa: </b>21/05/2025</p>
-        </li>
-      </ul>
+      <div v-if="monografias.length > 0">
+        <ul class="lista" v-for="item in monografias" :key="item.id">
+          <NuxtLink :to="`/monografia/${item.id}`">
+            <li>
+              <h4>{{ item.titulo }}</h4>
+              <p><b>Autor: </b>{{ item.autor }}</p>
+              <p><b>Orientador: </b>{{ item.orientador }}</p>
+              <p v-if="item.coorientador">
+                <b>Coorientador: </b>{{ item.coorientador }}
+              </p>
+              <p><b>Data de defesa: </b>{{ item.data_defesa }}</p>
+            </li>
+          </NuxtLink>
+        </ul>
+      </div>
+
+      <div class="sem-monografias" v-else>
+        <p>Não há nenhuma monografia.</p>
+      </div>
 
       <div class="paginacao">
         <button>Página anterior</button>
@@ -88,7 +63,27 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+const { $api } = useNuxtApp();
+
+const monografias = ref([]);
+
+const getMonografias = () => {
+  $api
+    .get("/monografias/monografias/")
+    .then((response) => {
+      monografias.value = response.data;
+    })
+    .catch((erro) => {
+      console.log(erro);
+      console.log(
+        "Não foi possível fazer a requisição GET em /monografias/monografias/."
+      );
+    });
+};
+
+getMonografias();
+</script>
 
 <style lang="scss" scoped>
 .pagina-inicio {
@@ -112,7 +107,7 @@
       @include title-1;
     }
   }
-  button {
+  a {
     line-height: 0;
     & {
       @include button;
@@ -190,6 +185,10 @@
   flex-direction: column;
   gap: $s5;
   @include mbottom-7;
+  a {
+    display: block;
+    min-width: 100%;
+  }
   li {
     cursor: pointer;
     background-color: $w1;
@@ -211,6 +210,15 @@
         color: $c1;
         font-weight: 500;
       }
+    }
+  }
+}
+
+.sem-monografias {
+  p {
+    color: $c1;
+    & {
+      @include text-1;
     }
   }
 }
