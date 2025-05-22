@@ -6,8 +6,10 @@
       <div class="introducao">
         <h1>Detalhes da monografia</h1>
         <div>
-          <button><IconsClock /></button>
-          <button><IconsEdit /></button>
+          <!-- <button><IconsClock /></button> -->
+          <NuxtLink :to="`/monografia/editar/${monografia.id}`"
+            ><IconsEdit
+          /></NuxtLink>
         </div>
       </div>
 
@@ -92,7 +94,7 @@ getMonografia();
   div {
     display: flex;
     gap: $s5;
-    button {
+    a {
       line-height: 0;
       & {
         @include button;
