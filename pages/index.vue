@@ -8,19 +8,24 @@
         <NuxtLink to="/monografia/criar"><IconsPlus /></NuxtLink>
       </div>
 
-      <form class="buscas">
-        <div>
-          <input
-            type="text"
-            placeholder="Título, autor, orientador, coorientador, resumo, abstract, palavras-chave..."
-          />
-          <button @click.prevent><IconsSearch /></button>
-        </div>
-        <div>
-          <input type="date" />
-          <button @click.prevent><IconsSearch /></button>
-        </div>
-      </form>
+      <div class="buscas">
+        <form @submit.prevent="pesquisar">
+          <div>
+            <input
+              v-model="buscaInput"
+              type="text"
+              placeholder="Título, autor, orientador, coorientador, resumo, abstract, palavras-chave..."
+            />
+            <button type="submit"><IconsSearch /></button>
+          </div>
+        </form>
+        <form @submit.prevent="pesquisarPorData">
+          <div>
+            <input type="date" v-model="dataBuscaInput" />
+            <button type="submit"><IconsSearch /></button>
+          </div>
+        </form>
+      </div>
 
       <div class="ordenacao">
         <p>{{ monografias.length }} monografias</p>
@@ -67,22 +72,53 @@
 const { $api } = useNuxtApp();
 
 const monografias = ref([]);
+const buscaInput = ref("");
+const dataBuscaInput = ref("");
 
-const getMonografias = () => {
+const fetchMonografias = (params = {}) => {
+  console.log(params);
+  monografias.value = [];
+
+  const queryParams = new URLSearchParams();
+  if (params.search) {
+    queryParams.append("search", params.search);
+  }
+  if (params.data_defesa) {
+    queryParams.append("data_defesa", params.data_defesa);
+  }
+
+  const url = `/monografias/monografias/?${queryParams.toString()}`;
+
   $api
-    .get("/monografias/monografias/")
+    .get(url)
     .then((response) => {
-      monografias.value = response.data;
+      if (response.data && Array.isArray(response.data.results)) {
+        monografias.value = response.data.results;
+      } else if (Array.isArray(response.data)) {
+        monografias.value = response.data;
+      } else {
+        monografias.value = [];
+        console.warn("Estrutura de dados da API inesperada:", response.data);
+      }
     })
     .catch((erro) => {
       console.log(erro);
-      console.log(
-        "Não foi possível fazer a requisição GET em /monografias/monografias/."
-      );
+      console.log(`Não foi possível fazer a requisição GET em ${url}.`);
+      monografias.value = [];
     });
 };
 
-getMonografias();
+const pesquisar = () => {
+  dataBuscaInput.value = "";
+  fetchMonografias({ search: buscaInput.value });
+};
+
+const pesquisarPorData = () => {
+  buscaInput.value = "";
+  fetchMonografias({ data_defesa: dataBuscaInput.value });
+};
+
+fetchMonografias();
 </script>
 
 <style lang="scss" scoped>
@@ -120,11 +156,13 @@ getMonografias();
   grid-template-columns: 4fr 1fr;
   gap: $s5;
   @include mbottom-7;
-  & > div {
-    display: flex;
-    align-items: center;
-    border: 1px solid $c2;
-    @include border;
+  & > form {
+    div {
+      display: flex;
+      align-items: center;
+      border: 1px solid $c2;
+      @include border;
+    }
     button {
       line-height: 0;
     }

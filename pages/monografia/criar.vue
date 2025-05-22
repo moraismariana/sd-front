@@ -188,24 +188,6 @@ const removerArquivo = (id) => {
 };
 
 const salvarMonografia = () => {
-  // let promises = [];
-
-  // Requisição para salvar textos
-  // promises.push(
-  //   $api
-  //     .patch(
-  //       `/monografias/monografias/${useRoute().params.id}/`,
-  //       monografia.value
-  //     )
-  //     .then((response) => {
-  //       console.log(response);
-  //       console.log(response.data);
-  //     })
-  //     .catch((erro) => {
-  //       console.log(erro);
-  //     })
-  // );
-
   $api
     .post("/monografias/monografias/", monografia.value)
     .then((response) => {
@@ -232,41 +214,14 @@ const salvarMonografia = () => {
           });
       }
     })
+    .then(() => {
+      window.alert("Nova monografia criada com sucesso.");
+      useRouter().push("/");
+    })
     .catch((erro) => {
       console.log(erro);
       console.log("Não foi possível criar uma nova monografia.");
     });
-
-  // Requisição para enviar arquivos
-  // if (arquivosParaEnviar.value.length > 0) {
-  //   for (const arquivo of arquivosParaEnviar.value) {
-  //     const formData = new FormData();
-  //     formData.append("nome_arquivo", arquivo.name);
-  //     formData.append("arquivo", arquivo, arquivo.name);
-  //     formData.append("monografia", useRoute().params.id);
-  //     promises.push(
-  //       $api
-  //         .post("/monografias/arquivos/", formData)
-  //         .then((response) => {
-  //           console.log(response);
-  //           console.log(response.data);
-  //           arquivosParaEnviar.value = [];
-  //         })
-  //         .catch((erro) => {
-  //           console.log(erro);
-  //           console.log("Não foi possível enviar novas monografias.");
-  //         })
-  //     );
-  //   }
-  // }
-
-  // Promise.all(promises)
-  //   .then(() => {
-  //     window.alert("Monografia atualizada com sucesso.");
-  //   })
-  //   .catch((error) => {
-  //     console.error("Erro ao atualizar a monografia:", error);
-  //   });
 };
 </script>
 
