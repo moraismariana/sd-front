@@ -9,66 +9,110 @@
       <div class="box">
         <form>
           <div>
-            <label for="titulo">Título</label>
-            <input type="text" id="titulo" name="titulo" />
+            <label for="titulo">Título*</label>
+            <input
+              type="text"
+              id="titulo"
+              name="titulo"
+              v-model="monografia.titulo"
+              required
+            />
           </div>
           <div>
-            <label for="autor">Autor</label>
-            <input type="text" id="autor" name="autor" />
+            <label for="autor">Autor*</label>
+            <input
+              type="text"
+              id="autor"
+              name="autor"
+              v-model="monografia.autor"
+              required
+            />
           </div>
           <div>
-            <label for="data">Data de defesa</label>
-            <input type="date" id="data" name="data" />
+            <label for="data">Data de defesa*</label>
+            <input
+              type="date"
+              id="data"
+              name="data"
+              v-model="monografia.data_defesa"
+              required
+            />
           </div>
           <div>
-            <label for="orientador">Orientador</label>
-            <input type="text" id="orientador" name="orientador" />
+            <label for="orientador">Orientador*</label>
+            <input
+              type="text"
+              id="orientador"
+              name="orientador"
+              v-model="monografia.orientador"
+              required
+            />
           </div>
           <div>
             <label for="coorientador">Coorientador</label>
-            <input type="text" id="coorientador" name="coorientador" />
+            <input
+              type="text"
+              id="coorientador"
+              name="coorientador"
+              v-model="monografia.coorientador"
+            />
           </div>
           <div>
-            <label for="resumo">Resumo</label>
-            <textarea name="resumo" id="resumo" cols="30" rows="5"></textarea>
+            <label for="resumo">Resumo*</label>
+            <textarea
+              name="resumo"
+              id="resumo"
+              cols="30"
+              rows="5"
+              v-model="monografia.resumo"
+              required
+            ></textarea>
           </div>
           <div>
-            <label for="abstract">Abstract</label>
+            <label for="abstract">Abstract*</label>
             <textarea
               name="abstract"
               id="abstract"
               cols="30"
               rows="5"
+              v-model="monografia.abstract"
+              required
             ></textarea>
           </div>
           <div>
-            <label for="palavras-chave">Palavras-chave</label>
+            <label for="palavras-chave">Palavras-chave*</label>
             <textarea
               name="palavras-chave"
               id="palavras-chave"
               cols="30"
               rows="5"
+              v-model="monografia.palavras_chave"
+              required
             ></textarea>
           </div>
           <div class="arquivos">
             <div class="arquivos-add">
-              <p>Arquivos</p>
-              <button><IconsPlus /> Adicionar arquivos</button>
-            </div>
-            <div class="arquivo">
-              <p>nome arquivo.pdf</p>
-              <button>
-                <IconsClose />
+              <p>Arquivos*</p>
+              <button @click.prevent="ativarInputArquivo">
+                <IconsPlus /> Adicionar arquivos
               </button>
+              <input
+                type="file"
+                ref="arquivoInputRef"
+                multiple
+                @change="armazenarArquivo"
+                style="display: none"
+                accept=".pdf,.doc,.docx"
+              />
             </div>
-            <div class="arquivo">
-              <p>nome arquivo.pdf</p>
-              <button>
+            <div class="arquivo" v-for="arquivo in arquivos" :key="arquivo.id">
+              <p>{{ arquivo.nome_arquivo }}</p>
+              <button @click.prevent="removerArquivo(arquivo.id)">
                 <IconsClose />
               </button>
             </div>
           </div>
-          <button>Salvar</button>
+          <button @click.prevent="salvarMonografia">Salvar</button>
         </form>
       </div>
     </div>
@@ -77,7 +121,154 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+const { $api } = useNuxtApp();
+
+const monografia = ref({
+  titulo: "",
+  autor: "",
+  orientador: "",
+  coorientador: "",
+  resumo: "",
+  abstract: "",
+  palavras_chave: "",
+  data_defesa: "",
+});
+
+const arquivos = ref([]);
+const arquivosParaEnviar = ref([]);
+const arquivoInputRef = ref(null);
+let tempFileIdCounter = 0;
+
+const ativarInputArquivo = () => {
+  arquivoInputRef.value?.click();
+};
+
+const armazenarArquivo = (event) => {
+  const arquivosSelecionados = event.target.files;
+  if (!arquivosSelecionados) return;
+
+  for (const file of arquivosSelecionados) {
+    const tempId = `temp_${Date.now()}_${tempFileIdCounter++}`;
+
+    arquivosParaEnviar.value.push(file);
+
+    arquivos.value.push({
+      id: tempId,
+      nome_arquivo: file.name,
+      arquivo: null,
+      monografia: null,
+      isNew: true,
+      originalFile: file,
+    });
+  }
+
+  if (arquivoInputRef.value) {
+    arquivoInputRef.value.value = "";
+  }
+};
+
+const removerArquivo = (id) => {
+  const indexEmArquivos = arquivos.value.findIndex(
+    (arquivo) => arquivo.id === id
+  );
+  if (indexEmArquivos === -1) return;
+
+  const arquivoParaRemoverObj = arquivos.value[indexEmArquivos];
+  arquivos.value.splice(indexEmArquivos, 1);
+
+  if (arquivoParaRemoverObj && arquivoParaRemoverObj.originalFile) {
+    const indexEmArquivosParaEnviar = arquivosParaEnviar.value.findIndex(
+      (file) => file === arquivoParaRemoverObj.originalFile
+    );
+    if (indexEmArquivosParaEnviar !== -1) {
+      arquivosParaEnviar.value.splice(indexEmArquivosParaEnviar, 1);
+    }
+  }
+};
+
+const salvarMonografia = () => {
+  // let promises = [];
+
+  // Requisição para salvar textos
+  // promises.push(
+  //   $api
+  //     .patch(
+  //       `/monografias/monografias/${useRoute().params.id}/`,
+  //       monografia.value
+  //     )
+  //     .then((response) => {
+  //       console.log(response);
+  //       console.log(response.data);
+  //     })
+  //     .catch((erro) => {
+  //       console.log(erro);
+  //     })
+  // );
+
+  $api
+    .post("/monografias/monografias/", monografia.value)
+    .then((response) => {
+      console.log(response);
+      console.log(response.data);
+
+      const id = response.data.id;
+
+      for (const arquivo of arquivosParaEnviar.value) {
+        const formData = new FormData();
+        formData.append("nome_arquivo", arquivo.name);
+        formData.append("arquivo", arquivo, arquivo.name);
+        formData.append("monografia", id);
+
+        $api
+          .post("/monografias/arquivos/", formData)
+          .then(() => {
+            console.log("Arquivos enviados com sucesso.");
+            arquivosParaEnviar.value = [];
+          })
+          .catch((erro) => {
+            console.log(erro);
+            console.log("Não foi possível enviar novas monografias.");
+          });
+      }
+    })
+    .catch((erro) => {
+      console.log(erro);
+      console.log("Não foi possível criar uma nova monografia.");
+    });
+
+  // Requisição para enviar arquivos
+  // if (arquivosParaEnviar.value.length > 0) {
+  //   for (const arquivo of arquivosParaEnviar.value) {
+  //     const formData = new FormData();
+  //     formData.append("nome_arquivo", arquivo.name);
+  //     formData.append("arquivo", arquivo, arquivo.name);
+  //     formData.append("monografia", useRoute().params.id);
+  //     promises.push(
+  //       $api
+  //         .post("/monografias/arquivos/", formData)
+  //         .then((response) => {
+  //           console.log(response);
+  //           console.log(response.data);
+  //           arquivosParaEnviar.value = [];
+  //         })
+  //         .catch((erro) => {
+  //           console.log(erro);
+  //           console.log("Não foi possível enviar novas monografias.");
+  //         })
+  //     );
+  //   }
+  // }
+
+  // Promise.all(promises)
+  //   .then(() => {
+  //     window.alert("Monografia atualizada com sucesso.");
+  //   })
+  //   .catch((error) => {
+  //     console.error("Erro ao atualizar a monografia:", error);
+  //   });
+};
+</script>
 
 <style lang="scss" scoped>
 .pagina-editar {
